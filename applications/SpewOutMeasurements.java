@@ -13,7 +13,9 @@ public class SpewOutMeasurements implements RpLidarListener {
 		double r = measurement.distance / 4.0;
 		if (measurement.start)
 			System.out.println();
-		System.out.printf(measurement.start + " %3d   theta = %6.2f r = %10.2f\n", measurement.quality, deg, r);
+		if( deg > 350 )
+			System.out.printf(measurement.start + " %3d   theta = %6.2f r = %10.2f\n", measurement.quality, deg, r);
+//		System.out.printf(measurement.start + " %3d   theta = %4d r = %5d\n", measurement.quality, measurement.angle, measurement.distance);
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class SpewOutMeasurements implements RpLidarListener {
 		driver.sendGetInfo(1000);
 		driver.sendGetHealth(1000);
 		driver.sendScan(500);
-		driver.pause(5000);
+		driver.pause(10000);
 		driver.sendReset();
 		driver.pause(100);
 		driver.shutdown();

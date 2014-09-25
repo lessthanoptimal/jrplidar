@@ -14,6 +14,7 @@ import java.io.OutputStream;
  *
  * @author Peter Abeles
  */
+// TODO wait for responce doesn't appear to be working
 public class RpLidarLowLevelDriver {
 
 	// out going packet types
@@ -215,7 +216,8 @@ public class RpLidarLowLevelDriver {
 				if (parseScan(data, offset, 5)) {
 					offset += 5;
 				} else {
-					System.out.println("--- Bad Packet ---");
+					if( verbose )
+						System.out.println("--- Bad Packet ---");
 					offset += 1;
 				}
 			} else {
@@ -329,8 +331,8 @@ public class RpLidarLowLevelDriver {
 
 		measurement.start = start0;
 		measurement.quality = (b0 & 0xFF) >> 2;
-		measurement.angle = ((b1 & 0xFF) >> 1) | ((data[offset + 2] & 0xFF) << 7);
-		measurement.distance = (data[offset + 3] & 0xFF) | ((data[offset + 4] & 0xFF) << 8);
+		measurement.angle = ((b1 & 0xFF)  | ((data[offset + 2] & 0xFF) << 8)) >> 1;
+		measurement.distance = ((data[offset + 3] & 0xFF) | ((data[offset + 4] & 0xFF) << 8));
 
 		listener.handleMeasurement(measurement);
 		return true;
