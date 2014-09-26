@@ -15,8 +15,11 @@ public class RpLidarScan {
 
 	public int quality[] = new int[N];
 	public int distance[] = new int[N];
+	/** System.currentTimeMillis() when a new observation arrived */
+	public long time[] = new long[N];
 	/** index of elements which were written to */
 	public GrowQueue_I32 used = new GrowQueue_I32();
+
 
 	/**
 	 * Copies 'scan' into this scan.
@@ -26,6 +29,7 @@ public class RpLidarScan {
 	public void set( RpLidarScan scan ) {
 		System.arraycopy(scan.quality,0,quality,0,N);
 		System.arraycopy(scan.distance,0,distance,0,N);
+		System.arraycopy(scan.time,0,time,0,N);
 		used.resize(scan.used.size);
 		for (int i = 0; i < scan.used.size; i++) {
 			used.data[i] = scan.used.data[i];

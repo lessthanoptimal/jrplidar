@@ -13,7 +13,7 @@ public class CheckHighLevel {
 
 		double mm[] = new double[ RpLidarScan.N ];
 
-		if (!driver.initialize("/dev/ttyUSB0")) {
+		if (!driver.initialize("/dev/ttyUSB0",0)) {
 			System.out.println("Failed to initialize");
 		} else {
 			RpLidarScan scan = new RpLidarScan();

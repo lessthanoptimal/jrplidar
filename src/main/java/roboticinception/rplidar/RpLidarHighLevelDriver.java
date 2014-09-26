@@ -21,9 +21,11 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 	/**
 	 * Connects to the LIDAR
 	 * @param device Which device the lidar is connected to
+	 * @param totalCollect How many measurements should it collect in a single scan.  If <= 0 it will automatically
+	 *                     determine the number in a complete scan and use that.
 	 * @return true if successful or false if not
 	 */
-	public boolean initialize( String device ) {
+	public boolean initialize( String device , int totalCollect ) {
 		if( driver != null )
 			throw new RuntimeException("Already initialized");
 
@@ -44,7 +46,24 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 //			return false;
 		}
 
-		// collect statistics and compute the type of packet it will expect
+		if( totalCollect <= 0 ) {
+			if( !autoSetCollectionToScan() )
+				return false;
+		} else {
+			expectedCount = totalCollect;
+		}
+
+		System.out.println(" expected count = "+expectedCount);
+
+		return true;
+	}
+
+	/**
+	 * Determine the number of measurements it needs to collect to approximately read in an entire scan using
+	 *
+	 * @return true if no errors
+	 */
+	private boolean autoSetCollectionToScan() {
 		int numberOfAttempts = 0;
 		while( true ) {
 			int N = 10;
@@ -80,8 +99,6 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 				throw new RuntimeException("Data is too noisy.  High variance in number of measurements per scan");
 			}
 		}
-
-		System.out.println(" expected count = "+expectedCount);
 
 		return true;
 	}
@@ -150,6 +167,7 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 		}
 
 		work.used.add(which);
+		work.time[which] = measurement.timeMilli;
 		work.distance[which] = measurement.distance;
 		work.quality[which] = measurement.quality;
 	}

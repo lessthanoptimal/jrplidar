@@ -329,6 +329,7 @@ public class RpLidarLowLevelDriver {
 		if ((b1 & 0x01) != 1)
 			return false;
 
+		measurement.timeMilli = System.currentTimeMillis();
 		measurement.start = start0;
 		measurement.quality = (b0 & 0xFF) >> 2;
 		measurement.angle = ((b1 & 0xFF)  | ((data[offset + 2] & 0xFF) << 8)) >> 1;

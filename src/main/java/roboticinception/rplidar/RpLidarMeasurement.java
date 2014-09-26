@@ -10,6 +10,8 @@ public class RpLidarMeasurement {
 	public int quality;
 	public int angle;
 	public int distance;
+	/** System.currentTimeMillis() when the measurement arrived */
+	public long timeMilli;
 
 	public boolean isInvalid() {
 		return distance == 0;
