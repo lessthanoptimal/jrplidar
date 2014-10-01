@@ -17,6 +17,7 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 	RpLidarLowLevelDriver driver;
 
 	int expectedCount;
+	volatile boolean initialized;
 
 	/**
 	 * Connects to the LIDAR
@@ -28,6 +29,7 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 	public boolean initialize( String device , int totalCollect ) {
 		if( driver != null )
 			throw new RuntimeException("Already initialized");
+		initialized = false;
 
 		try {
 			driver = new RpLidarLowLevelDriver(device, this);
@@ -53,7 +55,8 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 			expectedCount = totalCollect;
 		}
 
-		System.out.println(" expected count = "+expectedCount);
+		initialized = true;
+//		System.out.println(" expected count = "+expectedCount);
 
 		return true;
 	}
@@ -113,6 +116,7 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 			driver.shutdown();
 			driver.pause(100);
 			driver = null;
+			initialized = false;
 		}
 	}
 
@@ -180,5 +184,9 @@ public class RpLidarHighLevelDriver implements RpLidarListener {
 	@Override
 	public void handleDeviceInfo( RpLidarDeviceInfo info ) {
 
+	}
+
+	public boolean isInitialized() {
+		return initialized;
 	}
 }
