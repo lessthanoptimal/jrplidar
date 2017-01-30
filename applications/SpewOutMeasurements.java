@@ -38,6 +38,10 @@ public class SpewOutMeasurements implements RpLidarListener {
 
 		driver.sendGetInfo(1000);
 		driver.sendGetHealth(1000);
+		
+		//for v2 only - I guess this command is ignored by v1
+		driver.sendStartMotor(660);
+
 		driver.sendScan(500);
 		driver.pause(10000);
 		driver.sendReset();
