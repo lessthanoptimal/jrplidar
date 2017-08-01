@@ -26,6 +26,8 @@ public class RpLidarLowLevelDriver {
 	public static final byte FORCE_SCAN = (byte) 0x21;
 	public static final byte GET_INFO = (byte) 0x50;
 	public static final byte GET_HEALTH = (byte) 0x52;
+	public static final byte START_MOTOR = (byte) 0xF0;
+
 
 	// in coming packet types
 	public static final byte RCV_INFO = (byte) 0x04;
