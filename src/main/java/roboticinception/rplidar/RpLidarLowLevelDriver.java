@@ -26,6 +26,8 @@ public class RpLidarLowLevelDriver {
 	public static final byte FORCE_SCAN = (byte) 0x21;
 	public static final byte GET_INFO = (byte) 0x50;
 	public static final byte GET_HEALTH = (byte) 0x52;
+	public static final byte START_MOTOR = (byte) 0xF0;
+
 
 	// in coming packet types
 	public static final byte RCV_INFO = (byte) 0x04;
@@ -189,6 +191,57 @@ public class RpLidarLowLevelDriver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Sends a command with data payload
+	 */
+	protected void sendPayLoad(byte command, byte[] payLoad) {
+		if (verbose) {
+			System.out.printf("Sending command 0x%02x\n", command & 0xFF);
+		}
+
+		dataOut[0] = SYNC_BYTE0;
+		dataOut[1] = command;
+		
+		//add payLoad and calculate checksum
+		dataOut[2] = (byte) payLoad.length;
+		int checksum = 0 ^ dataOut[0] ^ dataOut[1] ^ (dataOut[2] & 0xFF);
+		
+		for(int i=0; i<payLoad.length; i++){
+			dataOut[3 + i] = payLoad[i];
+			checksum ^= dataOut[3 + i];
+		}
+		
+		//add checksum - now total length is 3 + payLoad.length + 1
+		dataOut[3 + payLoad.length] = (byte) checksum;
+
+		try {
+			out.write(dataOut, 0, 3 + payLoad.length + 1);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Sends a command with data payload - int
+	 */
+	protected void sendPayLoad(byte command, int payLoadInt) {
+		byte[] payLoad = new byte[2];
+		
+		//load payload little Endian
+		payLoad[0] = (byte) payLoadInt;
+		payLoad[1] = (byte) (payLoadInt >> 8);
+		
+		sendPayLoad(command, payLoad);
+	}
+	
+	/**
+	 * Sends a start motor command
+	 */
+	public void sendStartMotor(int speed) {
+		sendPayLoad(START_MOTOR, speed);
 	}
 
 	/**
